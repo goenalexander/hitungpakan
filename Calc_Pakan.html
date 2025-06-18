@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penghitung Gizi Pakan Unggas</title>
+    <style>
+        /* style.css */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 900px; /* Lebarkan sedikit container */
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #0056b3;
+            margin-bottom: 30px;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 10px; /* Space between elements */
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+        .input-group label {
+            flex-basis: 150px; /* Fixed width for label, slightly wider */
+            min-width: 120px;
+        }
+        .input-group select, .input-group input[type="number"] {
+            flex-grow: 1; /* Allow select and input to take available space */
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        .unit-selection {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .unit-selection input[type="radio"] {
+            margin-right: 5px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 12px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #e9f7ff;
+            border: 1px solid #b3e0ff;
+            border-radius: 5px;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: left; /* Biarkan teks hasil rata kiri */
+            color: #0056b3;
+            display: none; /* Hidden by default */
+        }
+        #result h3 {
+            margin-top: 0;
+            color: #004085;
+        }
+        #result p {
+            margin: 5px 0;
+        }
+        .error-message {
+            color: red;
+            margin-top: 10px;
+            text-align: center;
+            display: none; /* Hidden by default */
+        }
+        .footer-note {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #666;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        .footer-note a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .footer-note a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Penghitung Gizi Pakan Unggas</h1>
+
+        <div class="unit-selection">
+            <label>
+                <input type="radio" name="unit" value="percent"> Persen
+            </label>
+            <label>
+               	<input type="radio" name="unit" value="gram" checked> Gram
+            </label>
+        </div>
+
+        <div id="feed-inputs">
+            <div class="input-group">
+                <label for="feed1">Bahan Pakan 1:</label>
+                <select id="feed1" class="feed-select">
+                    <option value="">-- Pilih Bahan --</option>
+                </select>
+                <input type="number" id="amount1" class="feed-amount" placeholder="Jumlah" min="0" step="any">
+            </div>
+            <div class="input-group">
+                <label for="feed2">Bahan Pakan 2:</label>
+                <select id="feed2" class="feed-select">
+                    <option value="">-- Pilih Bahan --</option>
+                </select>
+                <input type="number" id="amount2" class="feed-amount" placeholder="Jumlah" min="0" step="any">
+            </div>
+            <div class="input-group">
+                <label for="feed3">Bahan Pakan 3:</label>
+                <select id="feed3" class="feed-select">
+                    <option value="">-- Pilih Bahan --</option>
+                </select>
+                <input type="number" id="amount3" class="feed-amount" placeholder="Jumlah" min="0" step="any">
+            </div>
+            <div class="input-group">
+                <label for="feed4">Bahan Pakan 4:</label>
+                <select id="feed4" class="feed-select">
+                    <option value="">-- Pilih Bahan --</option>
+                </select>
+                <input type="number" id="amount4" class="feed-amount" placeholder="Jumlah" min="0" step="any">
+            </div>
+            <div class="input-group">
+                <label for="feed5">Bahan Pakan 5:</label>
+                <select id="feed5" class="feed-select">
+                    <option value="">-- Pilih Bahan --</option>
+                </select>
+                <input type="number" id="amount5" class="feed-amount" placeholder="Jumlah" min="0" step="any">
+            </div>
+        </div>
+
+        <button onclick="calculateNutrition()">Hitung Gizi</button>
+
+        <div id="errorMessage" class="error-message"></div>
+        <div id="result"></div>
+
+        <div class="footer-note">
+
+
+	<a href="https://saweria.co/jalangoen" target="_blank"> <p style="color: red;">  Dukung kami semakin berkembang, 
+											 <br>KLIK DISINI..!! </p> </a>
+
+
+
+		<br>
+		<br>
+		<p style="color: black;">Maju Terus Peternak Indonesia..!!</p>
+		<a href="https://www.instagram.com/jalan.goen" target="_blank">By @kandang.goen</a>
+		<br>
+
+		<br>
+		
+
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banner Tulisan</title>
+    <style>
+        .banner {
+            background-color: #4CAF50; /* Warna latar belakang hijau */
+            text-align: center; /* Teks rata tengah */
+            padding: 10px; /* Jarak dalam */
+	    color: white; /* Warna teks putih */
+            font-size: 14px; /* Ukuran font */
+            font-family: Arial, sans-serif; /* Jenis font */
+	    
+        }
+    </style>
+	</head>
+	<body>
+    <div class="banner">
+		<p>DISCLAIMER
+		<i>
+		<br>kandungan gizi yang ditampilkan dalam aplikasi ini, merupakan hasil pencarian di search engine 
+		<br>nilai asli mungkin berbeda karena kualitas pakan, kebijakan produsen pakan, dll
+		<br>aplikasi ini hanya untuk membantu saja dan bukan merupakan penghitung resmi </i>
+		</p>
+	</a>
+        
+    </div>
+
+
+
+
+                    </div>
+    </div>
+
+    <script>
+        // script.js
+
+        // Ini adalah DATA KANDUNGAN GIZI.
+        // Anda HARUS MENGISI data ini dengan nilai yang akurat dari pencarian Google/sumber terpercaya.
+        // Format: 'Nama Bahan': { protein: %, me: Kkal/kg, lemak: %, serat: %, ca: %, p: % }
+        const feedData = {
+            'Jagung Giling': { protein: 8.5, me: 3300, lemak: 3.5, serat: 2.0, ca: 0.02, p: 0.28 }, // Contoh
+            'Dedak': { protein: 12.0, me: 2600, lemak: 5.0, serat: 9.0, ca: 0.05, p: 1.20 }, // Contoh
+            'Menir': { protein: 10.0, me: 3200, lemak: 1.0, serat: 0.5, ca: 0.01, p: 0.10 }, // Contoh
+            'Bungkil Kedelai': { protein: 46.0, me: 2200, lemak: 1.5, serat: 3.0, ca: 0.25, p: 0.65 }, // Contoh
+            'Tepung Ikan': { protein: 65.0, me: 2900, lemak: 8.0, serat: 1.0, ca: 4.5, p: 2.5 },    // Contoh
+            'Tepung Tulang': { protein: 5.0, me: 500, lemak: 1.0, serat: 0.5, ca: 25.0, p: 12.0 },    // Contoh
+            'Pollard': { protein: 16.0, me: 2400, lemak: 4.0, serat: 8.0, ca: 0.10, p: 0.80 },         // Contoh
+            'Daun Singkong': { protein: 20.0, me: 1500, lemak: 2.0, serat: 15.0, ca: 0.50, p: 0.10 },   // Contoh (perlu perhatikan kadar air)
+            'Daun Pepaya': { protein: 18.0, me: 1400, lemak: 1.5, serat: 10.0, ca: 0.40, p: 0.08 },     // Contoh (perlu perhatikan kadar air)
+            'Daun Kangkung': { protein: 15.0, me: 1300, lemak: 1.0, serat: 8.0, ca: 0.30, p: 0.06 },   // Contoh (perlu perhatikan kadar air)
+	    'Daun Sawi': { protein: 1.5, me: 200, lemak: 0.2, serat: 1.0, ca: 0.10, p: 0.03 }, // Contoh, cari data akurat
+            'Daun Kol': { protein: 1.3, me: 250, lemak: 0.1, serat: 1.5, ca: 0.05, p: 0.02 },   // Contoh, cari data akurat           
+	    'Kecambah Padi': { protein: 10.0, me: 2800, lemak: 0.8, serat: 2.0, ca: 0.03, p: 0.15 },   // Contoh
+            'Kecambah Jagung': { protein: 9.0, me: 3000, lemak: 1.0, serat: 1.5, ca: 0.02, p: 0.12 },  // Contoh
+            'Azolla': { protein: 25.0, me: 1600, lemak: 3.0, serat: 12.0, ca: 0.60, p: 0.20 },          // Contoh (perlu perhatikan kadar air)
+            'Nasi Aking': { protein: 7.0, me: 3000, lemak: 0.5, serat: 0.5, ca: 0.01, p: 0.05 },       // Contoh
+            'Nasi Limbah Rumah Tangga': { protein: 7.0, me: 2800, lemak: 0.8, serat: 1.0, ca: 0.01, p: 0.05 }, // Contoh
+            'Konsentrat Protein 37%': { protein: 37.0, me: 2800, lemak: 3.0, serat: 4.0, ca: 3.0, p: 1.5 },
+            'Konsentrat Protein 40%': { protein: 40.0, me: 2900, lemak: 3.5, serat: 3.5, ca: 3.2, p: 1.8 },
+            'Ampas Tahu': { protein: 22.0, me: 1200, lemak: 1.0, serat: 5.0, ca: 0.10, p: 0.08 },      // Contoh (perlu perhatikan kadar air)
+            'Ampas Singkong': { protein: 1.0, me: 2500, lemak: 0.2, serat: 3.0, ca: 0.01, p: 0.02 },   // Contoh (protein sangat rendah)
+            // --- Pakan Ayam Pabrikan (Sangat Penting untuk Didetailkan dan Diisi Akurat) ---
+            // Data di bawah ini adalah CONTOH. CARI DATA SPESIFIK DARI PRODUSEN/LABEL PRODUK.
+            'CP - Hi-Pro-Vite 511 (Broiler Starter)': { protein: 22.5, me: 3100, lemak: 5.0, serat: 4.0, ca: 0.95, p: 0.70 },
+            'CP - Hi-Pro-Vite 512 (Broiler Finisher)': { protein: 20.0, me: 3200, lemak: 6.0, serat: 4.5, ca: 0.90, p: 0.65 },
+            'CP - Hi-Pro-Vite 521 (Layer Starter)': { protein: 19.0, me: 2800, lemak: 4.0, serat: 5.0, ca: 1.0, p: 0.75 },
+            'CP - Hi-Pro-Vite 522 (Layer Grower)': { protein: 17.0, me: 2750, lemak: 3.5, serat: 6.0, ca: 2.5, p: 0.60 },
+            'CP - Hi-Pro-Vite 523 (Layer Finisher)': { protein: 16.0, me: 2700, lemak: 3.0, serat: 7.0, ca: 3.8, p: 0.55 },
+            'Japfa - Comfeed Broiler Starter': { protein: 21.5, me: 3080, lemak: 4.8, serat: 4.2, ca: 0.92, p: 0.68 },
+            'Japfa - Comfeed Broiler Finisher': { protein: 19.5, me: 3180, lemak: 5.8, serat: 4.8, ca: 0.88, p: 0.63 },
+            'Japfa - Benefeed Layer Starter': { protein: 18.5, me: 2780, lemak: 3.8, serat: 5.2, ca: 0.98, p: 0.73 },
+            'Japfa - Benefeed Layer Grower': { protein: 16.5, me: 2730, lemak: 3.3, serat: 6.2, ca: 2.45, p: 0.58 },
+            'Japfa - Benefeed Layer Finisher': { protein: 15.5, me: 2680, lemak: 2.8, serat: 7.2, ca: 3.75, p: 0.53 },
+            'De Heus - Broiler Starter': { protein: 22.0, me: 3050, lemak: 4.9, serat: 4.1, ca: 0.93, p: 0.69 },
+            'De Heus - Broiler Finisher': { protein: 20.0, me: 3150, lemak: 5.9, serat: 4.6, ca: 0.89, p: 0.64 },
+            'Sinta Prima Feedmill - Broiler Starter': { protein: 21.8, me: 3070, lemak: 4.7, serat: 4.0, ca: 0.94, p: 0.67 },
+            'Malindo Feedmill - Broiler Starter': { protein: 21.7, me: 3060, lemak: 4.6, serat: 3.9, ca: 0.93, p: 0.66 },
+            'New Hope - Broiler Starter': { protein: 21.9, me: 3080, lemak: 4.8, serat: 4.1, ca: 0.95, p: 0.68 },
+   	    'Wonokoyo - BR 1 (Broiler Starter)': { protein: 20.0, me: 3100, lemak: 5.0, serat: 5.0, ca: 0.8, p: 0.5 }, // Data dari Wonokoyo BR 1
+            'Wonokoyo - BW (Broiler Crumble/Voer)': { protein: 20.0, me: 3100, lemak: 5.0, serat: 5.0, ca: 0.9, p: 0.6 }, // Mirip BR 1, cek label produk
+            'Wonokoyo - PP3 (Pakan Puyuh Petelur)': { protein: 20.0, me: 2800, lemak: 7.0, serat: 7.0, ca: 0.9, p: 0.6 }, // Data dari Wonokoyo PP3
+            'Wonokoyo - IP333 (Layer Duck Feed)': { protein: 21.0, me: 2900, lemak: 7.0, serat: 7.0, ca: 3.0, p: 0.8 }, // Data dari Wonokoyo IP333
+       
+            // Tambahkan semua varian pakan pabrikan lainnya sesuai kebutuhan dengan data gizi lengkap
+        };
+
+        // Mapping kunci singkat ke nama lengkap untuk tampilan
+        const nutrientDisplayNames = {
+            protein: 'Protein Kasar',
+            me: 'Energi Metabolisme',
+            lemak: 'Lemak Kasar',
+            serat: 'Serat Kasar',
+            ca: 'Kalsium',
+            p: 'Fosfor'
+        };
+
+        // Fungsi untuk mengisi dropdown bahan pakan
+        function populateFeedOptions() {
+            const selects = document.querySelectorAll('.feed-select');
+            const feedNames = Object.keys(feedData).sort(); // Urutkan alfabetis
+
+            selects.forEach(select => {
+                feedNames.forEach(name => {
+                    const option = document.createElement('option');
+                    option.value = name;
+                    option.textContent = name;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        // Panggil fungsi saat DOM selesai dimuat
+        document.addEventListener('DOMContentLoaded', populateFeedOptions);
+
+        function calculateNutrition() {
+            const feedSelects = document.querySelectorAll('.feed-select');
+            const feedAmounts = document.querySelectorAll('.feed-amount');
+            const selectedUnit = document.querySelector('input[name="unit"]:checked').value;
+            const resultDiv = document.getElementById('result');
+            const errorDiv = document.getElementById('errorMessage');
+
+            // Reset tampilan
+            resultDiv.style.display = 'none';
+            errorDiv.style.display = 'none';
+            errorDiv.textContent = '';
+            resultDiv.innerHTML = ''; // Gunakan innerHTML karena akan ada banyak baris
+
+            let totalGram = 0;
+            let totalPercentInput = 0;
+
+            // Inisialisasi total untuk setiap gizi
+            const totalNutrients = {
+                protein: 0,
+                me: 0,
+                lemak: 0,
+                serat: 0,
+                ca: 0,
+                p: 0
+            };
+
+            const activeInputs = [];
+
+            // Kumpulkan data dari input yang terisi
+            for (let i = 0; i < feedSelects.length; i++) {
+                const selectedFeed = feedSelects[i].value;
+                const amount = parseFloat(feedAmounts[i].value);
+
+                if (selectedFeed && (!isNaN(amount) && amount > 0)) {
+                    activeInputs.push({
+                        feed: selectedFeed,
+                        amount: amount
+                    });
+                } else if (selectedFeed && (isNaN(amount) || amount <= 0)) {
+                    errorDiv.textContent = 'Harap masukkan jumlah yang valid (angka positif) untuk semua bahan yang dipilih.';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+            }
+
+            if (activeInputs.length === 0) {
+                errorDiv.textContent = 'Mohon pilih setidaknya satu bahan pakan dan masukkan jumlahnya.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (selectedUnit === 'gram') {
+                for (const input of activeInputs) {
+                    const nutrients = feedData[input.feed];
+                    if (nutrients === undefined) {
+                        errorDiv.textContent = `Data gizi untuk "${input.feed}" tidak ditemukan.`;
+                        errorDiv.style.display = 'block';
+                        return;
+                    }
+
+                    // Hitung kontribusi gizi berdasarkan gram
+                    for (const key in nutrients) {
+                        if (key === 'me') {
+                            totalNutrients[key] += (input.amount / 1000) * nutrients[key]; // (gram / 1000) * Kkal/kg = Kkal
+                        } else {
+                            totalNutrients[key] += input.amount * (nutrients[key] / 100); // gram * (persentase / 100)
+                        }
+                    }
+                    totalGram += input.amount;
+                }
+
+                if (totalGram === 0) {
+                    errorDiv.textContent = 'Total gram tidak bisa nol.';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+
+                // Tampilkan total gram terlebih dahulu
+                resultDiv.innerHTML = `<h3>Kandungan Gizi Pakan:</h3>
+                                     <p>Total Gram Pakan: ${totalGram.toFixed(2)} gram</p><hr>`; // Tambah garis pemisah
+
+                // Konversi total gizi kembali ke persentase atau Kkal/kg
+                for (const key in totalNutrients) {
+                    let value;
+                    let unit;
+                    const displayName = nutrientDisplayNames[key] || key.charAt(0).toUpperCase() + key.slice(1);
+
+                    if (key === 'me') {
+                        value = (totalNutrients[key] / totalGram) * 1000; // (Total Kkal / Total gram) * 1000 = Kkal/kg
+                        unit = 'Kkal/kg';
+                    } else {
+                        value = (totalNutrients[key] / totalGram) * 100; // (Total gram gizi / Total gram pakan) * 100%
+                        unit = '%';
+                    }
+                    resultDiv.innerHTML += `<p>${displayName}: ${value.toFixed(2)} ${unit}</p>`;
+                }
+
+            } else { // selectedUnit === 'percent'
+                for (const input of activeInputs) {
+                    totalPercentInput += input.amount;
+                }
+
+                if (totalPercentInput !== 100) {
+                    errorDiv.textContent = `Total persentase bahan harus 100%. Saat ini: ${totalPercentInput.toFixed(2)} %.`;
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+
+                // Hitung total gizi berdasarkan persentase
+                for (const input of activeInputs) {
+                    const nutrients = feedData[input.feed];
+                    if (nutrients === undefined) {
+                        errorDiv.textContent = `Data gizi untuk "${input.feed}" tidak ditemukan.` ;
+                        errorDiv.style.display = 'block';
+                        return;
+                    }
+
+                    const contributionFactor = input.amount / 100; // Misal 20% bahan = 0.20
+                    for (const key in nutrients) {
+                        totalNutrients[key] += nutrients[key] * contributionFactor;
+                    }
+                }
+
+                resultDiv.innerHTML = '<h3>Kandungan Gizi Pakan:</h3>';
+                for (const key in totalNutrients) {
+                    let value = totalNutrients[key];
+                    let unit;
+                    const displayName = nutrientDisplayNames[key] || key.charAt(0).toUpperCase() + key.slice(1);
+
+                    if (key === 'me') {
+                        unit = 'Kkal/kg';
+                    } else {
+                        unit = '%';
+                    }
+                    resultDiv.innerHTML += `<p>${displayName}: ${value.toFixed(2)} ${unit}</p>`;
+                }
+            }
+
+            resultDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
